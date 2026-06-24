@@ -901,7 +901,8 @@
 
     <script>
         // ===== CONFIG =====
-        const DATA_URL = 'https://pfst.cf2.poecdn.net/base/application/81216ff73f78b73619115acea149cca05ed20ebf549029575a640cfa4745dc23';
+        const API_URL = 'https://onevr-auth.kenny-eriksson1986.workers.dev/positions';
+        const API_KEY = 'onevr-docs-2026';
 
         // ===== STATE =====
         let positionsData = null;
@@ -1035,7 +1036,9 @@
         // ===== DATA LOADING =====
         async function loadData() {
             try {
-                const resp = await fetch(DATA_URL);
+                const resp = await fetch(API_URL, {
+                    headers: { 'X-API-Key': API_KEY }
+                });
                 if (!resp.ok) throw new Error('HTTP ' + resp.status);
                 positionsData = await resp.json();
                 availDates = Object.keys(positionsData.dagar).sort();
@@ -1048,13 +1051,21 @@
                     currentDate = new Date(availDates[0] + 'T00:00:00');
                 }
 
-                document.getElementById('statusContent').textContent =
-                    positionsData.fran + ' → ' + positionsData.till + ' (' + positionsData.antalDagar + ' dagar, ' + positionsData.antalPersoner + ' poster)';
+                // Build status text
+                let statusText = 'OneVR API';
+                if (positionsData.fran && positionsData.till) {
+                    statusText += ' • ' + positionsData.fran + ' → ' + positionsData.till;
+                }
+                if (positionsData.antalDagar) {
+                    statusText += ' (' + positionsData.antalDagar + ' dagar)';
+                }
+                document.getElementById('statusContent').textContent = statusText;
                 updateFooter();
                 render();
             } catch (err) {
+                console.error('Data loading error:', err);
                 document.getElementById('positionsContainer').innerHTML =
-                    '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Kunde inte ladda data<br>' + err.message + '</div></div>';
+                    '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Kunde inte ladda data från API<br><small>' + err.message + '</small></div></div>';
                 document.getElementById('countBar').textContent = 'Fel vid laddning';
             }
         }
