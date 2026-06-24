@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>Positionslista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #007AFF;
+            --primary-dark: #0051D5;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F5F5F7;
+            --bg-tertiary: #EBEBF0;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border: #E5E5EA;
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+            --lf-color: #FF9500;
+            --tv-color: #AF52DE;
+            --til-color: #00BCD4;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+            --radius: 12px;
+        }
+
+        html.dark {
+            --primary: #0A84FF;
+            --bg-primary: #1C1C1E;
+            --bg-secondary: #2C2C2E;
+            --bg-tertiary: #3A3A3C;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0A6;
+            --text-tertiary: #666666;
+            --border: #38383A;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease;
+            overflow: hidden;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--bg-primary);
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .header-title {
+            font-size: 15px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .header-button {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+            font-size: 18px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .header-button:active {
+            background-color: var(--bg-tertiary);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            gap: 6px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        main::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        main::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
+
+        /* DATE SECTION */
+        .date-section {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .date-button {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .date-button:active {
+            background-color: var(--primary-dark);
+        }
+
+        .date-display {
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        /* SEARCH BAR */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 6px 10px;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .search-icon {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            outline: none;
+            padding: 2px 0;
+            -webkit-appearance: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .search-clear {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* FILTER ROW */
+        .filter-row {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .filter-select {
+            flex: 1;
+            padding: 8px 24px 8px 8px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23666' d='M0 0l5 5 5-5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 6px center;
+            min-height: 40px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .filter-button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            min-height: 40px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .filter-button:active,
+        .filter-select:active {
+            background-color: var(--bg-tertiary);
+        }
+
+        /* CHIP PANEL */
+        .chip-panel {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 6px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .chip-panel.open {
+            max-height: 120px;
+        }
+
+        .chip-button {
+            padding: 8px 4px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-height: 36px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .chip-button.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* COUNT BAR */
+        .count-bar {
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+
+        /* POSITIONS LIST */
+        .positions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .positions-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .positions-container::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
+
+        .position-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 10px;
+            border-left: 3px solid var(--border);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .position-card:active {
+            background-color: var(--bg-tertiary);
+        }
+
+        .position-card.now {
+            border-left-color: var(--success);
+            background-color: rgba(52, 199, 89, 0.05);
+        }
+
+        .position-card.lf {
+            border-left-color: var(--lf-color);
+        }
+
+        .position-card.tv {
+            border-left-color: var(--tv-color);
+        }
+
+        .position-card.til {
+            border-left-color: var(--til-color);
+        }
+
+        .position-role-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 6px;
+            border-radius: 4px;
+            min-width: 32px;
+            text-align: center;
+            flex-shrink: 0;
+            color: white;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .position-role-badge.lf { background-color: var(--lf-color); }
+        .position-role-badge.tv { background-color: var(--tv-color); }
+        .position-role-badge.til { background-color: var(--til-color); }
+        .position-role-badge.none { background-color: var(--text-tertiary); }
+
+        .position-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .position-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .position-ort {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .position-meta {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .position-time {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .position-turnr {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+        }
+
+        .position-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .position-badges {
+            display: flex;
+            gap: 3px;
+        }
+
+        .position-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 3px;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .position-badge.se { background-color: rgba(52, 199, 89, 0.2); color: var(--success); }
+        .position-badge.dk { background-color: rgba(255, 149, 0, 0.2); color: var(--warning); }
+        .position-badge.res { background-color: rgba(255, 59, 48, 0.2); color: var(--error); }
+
+        .position-now-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .position-chevron {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+            font-size: 15px;
+        }
+
+        .empty-state-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* SCHEDULE PANEL - FULLSCREEN */
+        .schedule-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-primary);
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            animation: slideInFromRight 0.3s ease;
+        }
+
+        .schedule-panel.open {
+            display: flex;
+        }
+
+        @keyframes slideInFromRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .schedule-panel-header {
+            padding: 14px 16px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .schedule-panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .schedule-panel-meta {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .schedule-panel-trains {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .schedule-panel-train {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .schedule-panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .schedule-panel-toggle {
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            min-height: 44px;
+            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .schedule-panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .schedule-panel-header-col {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 4px;
+        }
+
+        .schedule-panel-row { display: contents; }
+
+        .schedule-panel-date,
+        .schedule-panel-tur,
+        .schedule-panel-time {
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .schedule-panel-date {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .schedule-panel-date.today {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .schedule-panel-tur {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .schedule-panel-tur.ledig {
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+
+        .schedule-panel-time {
+            color: var(--text-secondary);
+        }
+
+        .schedule-panel-time.ledig {
+            color: var(--text-tertiary);
+        }
+
+        .schedule-panel-old { display: none; }
+
+        .schedule-panel-grid.show-old .schedule-panel-old { display: contents; }
+
+        .schedule-panel-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .schedule-panel-close {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 50px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .schedule-panel-close:active {
+            background-color: var(--bg-tertiary);
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 6px 16px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* LOADING */
+        .loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            gap: 16px;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--bg-tertiary);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .spinner-sm {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--bg-tertiary);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal {
+            background-color: var(--bg-primary);
+            width: 100%;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background-color: var(--bg-secondary);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .modal-content {
+            font-size: 14px;
+            color: var(--text-primary);
+            background-color: var(--bg-secondary);
+            padding: 10px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+        }
+
+        .modal-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 12px;
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 200;
+            animation: slideUpToast 0.3s ease;
+            box-shadow: var(--shadow-md);
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes slideUpToast {
+            from { transform: translateY(120%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <button class="header-button" id="settingsBtn" aria-label="Inställningar">⚙️</button>
+            <div class="header-title">Positionslista</div>
+            <button class="header-button" id="refreshBtn" aria-label="Uppdatera">🔄</button>
+        </header>
+
+        <main>
+            <div class="date-section">
+                <button class="date-button" id="prevBtn">←</button>
+                <div class="date-display" id="dateDisplay"></div>
+                <button class="date-button" id="nextBtn">→</button>
+            </div>
+
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Sök namn, tur, ort...">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+
+            <div class="filter-row">
+                <select class="filter-select" id="filterRoll">
+                    <option value="alla">Alla roller</option>
+                    <option value="lokforare">Lokförare</option>
+                    <option value="tagvard">Tågvärd</option>
+                    <option value="til">TIL</option>
+                </select>
+                <select class="filter-select" id="filterOrt">
+                    <option value="alla">Alla orter</option>
+                </select>
+                <button class="filter-button" id="filterChipBtn">Filter</button>
+            </div>
+
+            <div class="chip-panel" id="chipPanel">
+                <button class="chip-button" data-chip="now">Nu</button>
+                <button class="chip-button" data-chip="res">Reserv</button>
+                <button class="chip-button" data-chip="se">Sverige</button>
+                <button class="chip-button" data-chip="dk">Danmark</button>
+                <button class="chip-button" data-chip="tp">Ändrad</button>
+                <button class="chip-button" data-chip="adm">ADM</button>
+                <button class="chip-button" data-chip="utb">UTB</button>
+                <button class="chip-button" data-chip="insutb">INSUTB</button>
+            </div>
+
+            <div class="count-bar" id="countBar">Laddar...</div>
+
+            <div class="positions-container" id="positionsContainer">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Laddar positionslista...</div>
+                </div>
+            </div>
+        </main>
+
+        <footer id="footer">Laddar...</footer>
+    </div>
+
+    <!-- SCHEDULE PANEL -->
+    <div class="schedule-panel" id="schedulePanel">
+        <div class="schedule-panel-header">
+            <div class="schedule-panel-title" id="schedulePanelName">—</div>
+            <div class="schedule-panel-meta" id="schedulePanelMeta">—</div>
+            <div class="schedule-panel-trains" id="schedulePanelTrains"></div>
+        </div>
+        <div class="schedule-panel-content" id="schedulePanelContent"></div>
+        <div class="schedule-panel-footer">
+            <button class="schedule-panel-close" id="schedulePanelClose">Stäng</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Inställningar</h2>
+                <button class="modal-close" id="closeSettingsBtn">✕</button>
+            </div>
+            <div class="modal-section">
+                <label class="modal-label">Datakälla</label>
+                <div class="modal-content" id="statusContent">Laddar...</div>
+            </div>
+            <div class="modal-section">
+                <label class="modal-label">Senast uppdaterad</label>
+                <div class="modal-content" id="lastUpdatedContent">—</div>
+            </div>
+            <button class="modal-button" id="closeSettingsBtn2">Stäng</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIG =====
+        const DATA_URL = 'https://pfst.cf2.poecdn.net/base/application/81216ff73f78b73619115acea149cca05ed20ebf549029575a640cfa4745dc23';
+
+        // ===== STATE =====
+        let positionsData = null;
+        let availDates = [];
+        let currentDate = new Date();
+        let filterState = { roll: 'alla', ort: 'alla', chips: {}, search: '' };
+        let chipPanelOpen = false;
+        let searchDebounce = null;
+
+        // ===== DARK MODE =====
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            document.documentElement.classList.toggle('dark', e.matches);
+        });
+
+        // ===== UTILITIES =====
+        function formatDate(date) {
+            return date.toLocaleDateString('sv-SE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function formatDateKey(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + d;
+        }
+
+        function formatShortDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            const days = ['Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör'];
+            return days[date.getDay()] + ' ' + date.getDate() + '/' + (date.getMonth() + 1);
+        }
+
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2000);
+        }
+
+        function normalizeTurnNumber(turnr) {
+            if (!turnr) return '';
+            return String(turnr).trim().split(/[\s/]/)[0].split('-')[0];
+        }
+
+        // ===== CLASSIFICATION =====
+        function getRoleType(roll) {
+            if (!roll) return 'none';
+            const r = roll.toLowerCase();
+            if (r.includes('lokf')) return 'lf';
+            if (r.includes('tågv') || r.includes('tagv')) return 'tv';
+            if (r.includes('trafik') || r.includes('information')) return 'til';
+            return 'none';
+        }
+
+        function getRoleLabel(roleType) {
+            return { lf: 'Lokförare', tv: 'Tågvärd', til: 'TIL', none: '—' }[roleType] || '—';
+        }
+
+        function isTilPerson(p) {
+            const r = (p.roll || '').toLowerCase();
+            return r.includes('trafik') || r.includes('information');
+        }
+
+        function isNow(start, slut) {
+            if (!start || !slut || start === '-' || slut === '-') return false;
+            const now = new Date();
+            const [sh, sm] = start.split(':').map(Number);
+            const [eh, em] = slut.split(':').map(Number);
+            const nowMin = now.getHours() * 60 + now.getMinutes();
+            return nowMin >= (sh * 60 + sm) && nowMin < (eh * 60 + em);
+        }
+
+        function isReserve(turnr) {
+            if (!turnr) return false;
+            const t = String(turnr).toUpperCase();
+
+            // Check explicit RESERV/RES patterns
+            if (t.includes('RESERV') || t.startsWith('RES')) return true;
+
+            // Check -R suffix
+            if (t.endsWith('-R')) return true;
+
+            // Check if ends with reserve digits (81,82,91,92,93)
+            const lastTwo = t.replace(/[^0-9]/g, '').slice(-2);
+            if (['81', '82', '91', '92', '93'].includes(lastTwo)) return true;
+
+            return false;
+        }
+
+        function isSverige(turnr) {
+            const n = normalizeTurnNumber(turnr);
+            if (!n || n.length < 3 || !/^\d+$/.test(n)) return false;
+            return parseInt(n[2]) % 2 === 1;
+        }
+
+        function isDanmark(turnr) {
+            const n = normalizeTurnNumber(turnr);
+            if (!n || n.length < 3 || !/^\d+$/.test(n)) return false;
+            return parseInt(n[2]) % 2 === 0;
+        }
+
+        function isTpModified(turnr) {
+            if (!turnr) return false;
+            const t = String(turnr).toUpperCase();
+            if (t.includes('TP')) return true;
+            // NNNNNN-NNNNNN pattern (personal turnr with date)
+            if (/^\d{5,6}-\d{6}$/.test(t.replace(/\s/g, ''))) return true;
+            return false;
+        }
+
+        function isAdm(turnr) {
+            if (!turnr) return false;
+            return String(turnr).toUpperCase().includes('ADM');
+        }
+
+        function isUtb(turnr) {
+            if (!turnr) return false;
+            const t = String(turnr).toUpperCase();
+            return t.includes('UTB') && !t.includes('INSUTB');
+        }
+
+        function isInsUtb(turnr) {
+            if (!turnr) return false;
+            return String(turnr).toUpperCase().includes('INSUTB');
+        }
+
+        // ===== DATA LOADING =====
+        async function loadData() {
+            try {
+                const resp = await fetch(DATA_URL);
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                positionsData = await resp.json();
+                availDates = Object.keys(positionsData.dagar).sort();
+
+                // Set current date to first available
+                const todayKey = formatDateKey(new Date());
+                if (availDates.includes(todayKey)) {
+                    currentDate = new Date(todayKey + 'T00:00:00');
+                } else {
+                    currentDate = new Date(availDates[0] + 'T00:00:00');
+                }
+
+                document.getElementById('statusContent').textContent =
+                    positionsData.fran + ' → ' + positionsData.till + ' (' + positionsData.antalDagar + ' dagar, ' + positionsData.antalPersoner + ' poster)';
+                updateFooter();
+                render();
+            } catch (err) {
+                document.getElementById('positionsContainer').innerHTML =
+                    '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Kunde inte ladda data<br>' + err.message + '</div></div>';
+                document.getElementById('countBar').textContent = 'Fel vid laddning';
+            }
+        }
+
+        function updateFooter() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('footer').textContent = 'Uppdaterad: ' + h + ':' + m;
+            document.getElementById('lastUpdatedContent').textContent = formatDate(now) + ' kl. ' + h + ':' + m;
+        }
+
+        // ===== FILTERING & SORTING =====
+        function filterPositions() {
+            const dateKey = formatDateKey(currentDate);
+            if (!positionsData || !positionsData.dagar[dateKey]) return [];
+
+            let positions = positionsData.dagar[dateKey].slice();
+
+            positions = positions.filter(p => {
+                // Roll filter
+                if (filterState.roll !== 'alla') {
+                    const rt = getRoleType(p.roll);
+                    if (filterState.roll === 'lokforare' && rt !== 'lf') return false;
+                    if (filterState.roll === 'tagvard' && rt !== 'tv') return false;
+                    if (filterState.roll === 'til' && rt !== 'til') return false;
+                }
+
+                // Ort filter (TIL exempt)
+                if (filterState.ort !== 'alla') {
+                    if (!isTilPerson(p) && (p.ort || '').trim() !== filterState.ort) return false;
+                }
+
+                // Chips (OR)
+                const hasChips = Object.values(filterState.chips).some(v => v);
+                if (hasChips) {
+                    const match =
+                        (filterState.chips.now && isNow(p.start, p.slut)) ||
+                        (filterState.chips.res && isReserve(p.turnr)) ||
+                        (filterState.chips.se && isSverige(p.turnr)) ||
+                        (filterState.chips.dk && isDanmark(p.turnr)) ||
+                        (filterState.chips.tp && isTpModified(p.turnr)) ||
+                        (filterState.chips.adm && isAdm(p.turnr)) ||
+                        (filterState.chips.utb && isUtb(p.turnr)) ||
+                        (filterState.chips.insutb && isInsUtb(p.turnr));
+                    if (!match) return false;
+                }
+
+                // Search
+                if (filterState.search) {
+                    const q = filterState.search.toLowerCase();
+                    const hay = ((p.namn || '') + ' ' + (p.turnr || '') + ' ' + (p.roll || '') + ' ' + (p.ort || '') + ' ' + (p.tagnr || []).join(' ')).toLowerCase();
+                    if (!hay.includes(q)) return false;
+                }
+
+                return true;
+            });
+
+            // Sort by start time
+            positions.sort((a, b) => {
+                const sa = (a.start && a.start !== '-') ? a.start : '99:99';
+                const sb = (b.start && b.start !== '-') ? b.start : '99:99';
+                return sa.localeCompare(sb);
+            });
+
+            return positions;
+        }
+
+        // ===== RENDER =====
+        function renderFilterOrt() {
+            const dateKey = formatDateKey(currentDate);
+            const positions = (positionsData && positionsData.dagar[dateKey]) || [];
+            const orter = new Set();
+            positions.forEach(p => {
+                const o = (p.ort || '').trim();
+                if (o) orter.add(o);
+            });
+
+            const select = document.getElementById('filterOrt');
+            const prev = select.value;
+            select.innerHTML = '<option value="alla">Alla orter</option>';
+            Array.from(orter).sort().forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o;
+                opt.textContent = o;
+                select.appendChild(opt);
+            });
+            select.value = prev;
+        }
+
+        function renderPositions() {
+            const filtered = filterPositions();
+            const dateKey = formatDateKey(currentDate);
+            const total = (positionsData && positionsData.dagar[dateKey]) ? positionsData.dagar[dateKey].length : 0;
+
+            document.getElementById('countBar').textContent = filtered.length + ' av ' + total + ' personer';
+
+            const container = document.getElementById('positionsContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>Inga träffar</div></div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map((p, idx) => {
+                const roleType = getRoleType(p.roll);
+                const working = isNow(p.start, p.slut);
+                const badges = [];
+
+                if (isSverige(p.turnr)) badges.push({ t: 'SE', c: 'se' });
+                if (isDanmark(p.turnr)) badges.push({ t: 'DK', c: 'dk' });
+                if (isReserve(p.turnr)) badges.push({ t: 'RES', c: 'res' });
+                if (isTpModified(p.turnr)) badges.push({ t: 'TP', c: '' });
+                if (isAdm(p.turnr)) badges.push({ t: 'ADM', c: '' });
+                if (isUtb(p.turnr)) badges.push({ t: 'UTB', c: '' });
+                if (isInsUtb(p.turnr)) badges.push({ t: 'INST', c: '' });
+
+                const badgeHtml = badges.map(b => '<span class="position-badge ' + b.c + '">' + b.t + '</span>').join('');
+                const ortText = (p.ort || '').trim() || (isTilPerson(p) ? 'TIL' : '');
+
+                return '<div class="position-card ' + (working ? 'now ' : '') + roleType + '" data-idx="' + idx + '" data-person="' + (p.namn || '').replace(/"/g, '&quot;') + '" data-anstnr="' + (p.anstNr || '') + '" data-roll="' + (p.roll || '') + '" data-trains="' + (p.tagnr || []).join(',') + '">' +
+                    '<div class="position-role-badge ' + roleType + '">' + (roleType === 'lf' ? 'LF' : roleType === 'tv' ? 'TV' : roleType === 'til' ? 'TIL' : '—') + '</div>' +
+                    '<div class="position-content">' +
+                        '<div class="position-name">' + (p.namn || '—') + '</div>' +
+                        (ortText ? '<div class="position-ort">' + ortText + '</div>' : '') +
+                        '<div class="position-meta">' +
+                            '<span class="position-time">' + (p.start || '-') + '–' + (p.slut || '-') + '</span>' +
+                            '<span class="position-turnr">' + (p.turnr || '—') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="position-right">' +
+                        '<div class="position-badges">' + badgeHtml + '</div>' +
+                        '<div style="display:flex;gap:4px;align-items:center;">' +
+                            (working ? '<div class="position-now-dot"></div>' : '') +
+                            '<span class="position-chevron">›</span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            // Click handlers
+            document.querySelectorAll('.position-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const name = card.dataset.person;
+                    const anstNr = card.dataset.anstnr;
+                    const roll = card.dataset.roll;
+                    const trains = card.dataset.trains ? card.dataset.trains.split(',').filter(Boolean) : [];
+                    openSchedulePanel(name, roll, trains, anstNr);
+                });
+            });
+        }
+
+        function render() {
+            document.getElementById('dateDisplay').textContent = formatDate(currentDate);
+            renderFilterOrt();
+            renderPositions();
+        }
+
+        // ===== SCHEDULE PANEL =====
+        function openSchedulePanel(personName, personRoll, trainNumbers, anstNr) {
+            if (!positionsData) return;
+
+            document.getElementById('schedulePanelName').textContent = personName;
+            document.getElementById('schedulePanelMeta').textContent = personRoll || '—';
+
+            const tc = document.getElementById('schedulePanelTrains');
+            tc.innerHTML = (trainNumbers && trainNumbers.length > 0) ?
+                trainNumbers.map(t => '<span class="schedule-panel-train">🚂 ' + t + '</span>').join('') : '';
+
+            const today = formatDateKey(currentDate);
+            const yesterdayDate = new Date(currentDate);
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            const yesterday = formatDateKey(yesterdayDate);
+
+            let oldCount = 0;
+            let gridHtml = '<div class="schedule-panel-header-col">Dag</div><div class="schedule-panel-header-col">Tur</div><div class="schedule-panel-header-col">Tid</div>';
+
+            const nameLower = personName.toLowerCase();
+
+            availDates.forEach(dateKey => {
+                const persons = positionsData.dagar[dateKey] || [];
+                let match = null;
+
+                for (let i = 0; i < persons.length; i++) {
+                    if (anstNr && persons[i].anstNr === anstNr) {
+                        match = persons[i];
+                        break;
+                    }
+                    if (!anstNr && (persons[i].namn || '').toLowerCase() === nameLower) {
+                        match = persons[i];
+                        break;
+                    }
+                }
+
+                const isToday = dateKey === today;
+                const isOld = dateKey < yesterday;
+                if (isOld) oldCount++;
+
+                const rowClass = 'schedule-panel-row' + (isOld ? ' schedule-panel-old' : '');
+
+                if (match) {
+                    gridHtml += '<div class="' + rowClass + '">' +
+                        '<div class="schedule-panel-date ' + (isToday ? 'today' : '') + '">' + formatShortDate(dateKey) + '</div>' +
+                        '<div class="schedule-panel-tur">' + (match.turnr || '—') + '</div>' +
+                        '<div class="schedule-panel-time">' + (match.start || '-') + '–' + (match.slut || '-') + '</div>' +
+                    '</div>';
+                } else {
+                    gridHtml += '<div class="' + rowClass + '">' +
+                        '<div class="schedule-panel-date">' + formatShortDate(dateKey) + '</div>' +
+                        '<div class="schedule-panel-tur ledig">Ledig</div>' +
+                        '<div class="schedule-panel-time ledig">–</div>' +
+                    '</div>';
+                }
+            });
+
+            let content = '';
+            if (oldCount > 0) {
+                content += '<button class="schedule-panel-toggle" id="scheduleToggleOld">▼ Visa tidigare dagar (' + oldCount + ')</button>';
+            }
+            content += '<div class="schedule-panel-grid" id="schedulePanelGrid">' + gridHtml + '</div>';
+
+            document.getElementById('schedulePanelContent').innerHTML = content;
+            document.getElementById('schedulePanel').classList.add('open');
+
+            // Toggle old days handler
+            const toggleBtn = document.getElementById('scheduleToggleOld');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    const grid = document.getElementById('schedulePanelGrid');
+                    const open = grid.classList.contains('show-old');
+                    grid.classList.toggle('show-old');
+                    toggleBtn.textContent = open ?
+                        '▼ Visa tidigare dagar (' + oldCount + ')' :
+                        '▲ Dölj tidigare dagar';
+                });
+            }
+        }
+
+        // ===== EVENT HANDLERS =====
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            const idx = availDates.indexOf(formatDateKey(currentDate));
+            if (idx > 0) {
+                currentDate = new Date(availDates[idx - 1] + 'T00:00:00');
+                render();
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            const idx = availDates.indexOf(formatDateKey(currentDate));
+            if (idx < availDates.length - 1) {
+                currentDate = new Date(availDates[idx + 1] + 'T00:00:00');
+                render();
+            }
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            const btn = document.getElementById('refreshBtn');
+            btn.innerHTML = '<span class="spinner-sm"></span>';
+            btn.disabled = true;
+            loadData().then(() => {
+                btn.textContent = '🔄';
+                btn.disabled = false;
+                showToast('Data uppdaterad');
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(() => {
+                filterState.search = e.target.value;
+                renderPositions();
+            }, 250);
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            filterState.search = '';
+            document.getElementById('searchInput').value = '';
+            renderPositions();
+        });
+
+        document.getElementById('filterRoll').addEventListener('change', (e) => {
+            filterState.roll = e.target.value;
+            renderPositions();
+        });
+
+        document.getElementById('filterOrt').addEventListener('change', (e) => {
+            filterState.ort = e.target.value;
+            renderPositions();
+        });
+
+        document.getElementById('filterChipBtn').addEventListener('click', () => {
+            chipPanelOpen = !chipPanelOpen;
+            document.getElementById('chipPanel').classList.toggle('open', chipPanelOpen);
+        });
+
+        document.querySelectorAll('.chip-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const chip = btn.dataset.chip;
+                filterState.chips[chip] = !filterState.chips[chip];
+                btn.classList.toggle('active', filterState.chips[chip]);
+                const cnt = Object.values(filterState.chips).filter(v => v).length;
+                document.getElementById('filterChipBtn').textContent = cnt > 0 ? 'Filter (' + cnt + ')' : 'Filter';
+                renderPositions();
+            });
+        });
+
+        document.getElementById('schedulePanelClose').addEventListener('click', () => {
+            document.getElementById('schedulePanel').classList.remove('open');
+        });
+
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            document.getElementById('settingsModal').classList.add('active');
+        });
+
+        document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+            document.getElementById('settingsModal').classList.remove('active');
+        });
+
+        document.getElementById('closeSettingsBtn2').addEventListener('click', () => {
+            document.getElementById('settingsModal').classList.remove('active');
+        });
+
+        document.getElementById('settingsModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('settingsModal')) {
+                document.getElementById('settingsModal').classList.remove('active');
+            }
+        });
+
+        // ===== INIT =====
+        loadData();
+    </script>
+</body>
+</html>
