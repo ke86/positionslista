@@ -829,10 +829,7 @@
         <header>
             <button class="header-button" id="settingsBtn" aria-label="Inställningar">⚙️</button>
             <div class="header-title">Positionslista</div>
-            <div style="display: flex; gap: 4px;">
-                <button class="header-button" id="refreshBtn" aria-label="Uppdatera">🔄</button>
-                <button class="header-button" id="logoutBtn" aria-label="Logga ut">🚪</button>
-            </div>
+            <button class="header-button" id="refreshBtn" aria-label="Uppdatera">🔄</button>
         </header>
 
         <main>
@@ -913,6 +910,7 @@
                 <label class="modal-label">Senast uppdaterad</label>
                 <div class="modal-content" id="lastUpdatedContent">—</div>
             </div>
+            <button class="modal-button" style="background-color: var(--error);" id="logoutBtn">Logga ut</button>
             <button class="modal-button" id="closeSettingsBtn2">Stäng</button>
         </div>
     </div>
@@ -1414,7 +1412,10 @@
             }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            logout();
+            document.getElementById('settingsModal').classList.remove('active');
+        });
 
         document.getElementById('loginBtn').addEventListener('click', () => {
             const pwd = document.getElementById('passwordInput').value;
