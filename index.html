@@ -810,11 +810,29 @@
     </style>
 </head>
 <body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
+        <div style="width: 100%; max-width: 300px;">
+            <div style="margin-bottom: 32px; text-align: center;">
+                <h1 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin: 0;">Positionslista</h1>
+            </div>
+            <div style="background-color: var(--bg-secondary); border-radius: 12px; padding: 24px; border: 1px solid var(--border);">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Lösenord</label>
+                <input type="password" id="passwordInput" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; font-family: inherit; outline: none; box-sizing: border-box; background-color: var(--bg-primary); color: var(--text-primary); -webkit-appearance: none;" placeholder="Ange lösenord" autocomplete="off">
+                <button id="loginBtn" style="width: 100%; padding: 12px; margin-top: 16px; border: none; border-radius: 8px; background-color: var(--primary); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; -webkit-tap-highlight-color: transparent; min-height: 48px;">Logga in</button>
+                <div id="loginError" style="display: none; color: var(--error); font-size: 14px; margin-top: 12px; text-align: center; font-weight: 500;"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="app">
         <header>
             <button class="header-button" id="settingsBtn" aria-label="Inställningar">⚙️</button>
             <div class="header-title">Positionslista</div>
-            <button class="header-button" id="refreshBtn" aria-label="Uppdatera">🔄</button>
+            <div style="display: flex; gap: 4px;">
+                <button class="header-button" id="refreshBtn" aria-label="Uppdatera">🔄</button>
+                <button class="header-button" id="logoutBtn" aria-label="Logga ut">🚪</button>
+            </div>
         </header>
 
         <main>
@@ -903,6 +921,9 @@
         // ===== CONFIG =====
         const API_URL = 'https://onevr-auth.kenny-eriksson1986.workers.dev/positions';
         const API_KEY = 'onevr-docs-2026';
+
+        // PASSWORD - Ändra detta lösenord här
+        const PASSWORD = 'positionslista2026';
 
         // ===== STATE =====
         let positionsData = null;
@@ -1393,8 +1414,61 @@
             }
         });
 
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const pwd = document.getElementById('passwordInput').value;
+            if (!pwd) {
+                document.getElementById('loginError').textContent = 'Ange lösenord';
+                document.getElementById('loginError').style.display = 'block';
+                return;
+            }
+            if (login(pwd)) {
+                document.getElementById('loginError').style.display = 'none';
+            } else {
+                document.getElementById('loginError').textContent = 'Fel lösenord';
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('passwordInput').select();
+            }
+        });
+
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginBtn').click();
+            }
+        });
+
+        // ===== LOGIN SYSTEM =====
+        let authenticated = false;
+
+        function login(password) {
+            if (password === PASSWORD) {
+                authenticated = true;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                loadData();
+                return true;
+            }
+            return false;
+        }
+
+        function logout() {
+            authenticated = false;
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').focus();
+        }
+
+        function initAuth() {
+            // Visa login-skärm initialt
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('passwordInput').focus();
+        }
+
         // ===== INIT =====
-        loadData();
+        document.addEventListener('DOMContentLoaded', initAuth);
     </script>
 </body>
 </html>
